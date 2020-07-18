@@ -7,7 +7,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
   if (req.method !== 'POST') return res.status(400).send('Unsupported method')
 
-  const { href, referrer, token } = req.body
+  const { href, referrer, token, os, language } = req.body
   if (!href) return res.status(400).send('No href specified')
   if (referrer == null || referrer == undefined) return res.status(400).send('No referrer specified')
 
@@ -24,7 +24,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const hit: Hit = {
     referrer,
     token,
-    path: url.pathname
+    path: url.pathname,
+    date: new Date(),
+    language: language,
+    os: os
   }
 
   await firebase.firestore().collection('hits').add(hit)
