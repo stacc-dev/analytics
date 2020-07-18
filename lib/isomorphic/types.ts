@@ -1,0 +1,1 @@
+export type Project = { uid: string, name: string, token: string }
