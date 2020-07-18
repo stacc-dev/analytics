@@ -32,20 +32,20 @@ export default () => {
       
       <Modal title='Edit Project' visible={showEditProjectDialog} setVisible={setShowEditProjectDialog} controls={(
         <Box direction='row' staccSpace={16}>
-          <Button variant='callout' color='alternate' onClick={async () => {
-            await authedDataFetcher(`/api/projects/edit/${router.query.id}`, user, { name: editProjectName, domain:  editProjectDomain })
-            project.mutate({ ...project.data, name: editProjectName, domain: editProjectDomain })
-            setShowEditProjectDialog(false)
-          }}  disabled={!project.data.name}>
-            Save changes
-          </Button>
-
           <Button variant='danger' color='secondary' onClick={async () => {
             await authedDataFetcher(`/api/projects/delete/${router.query.id}`, user)
             setShowEditProjectDialog(false)
             router.push('/projects')
           }}>
             Delete Project
+          </Button>
+
+          <Button variant='callout' color='accent' onClick={async () => {
+            await authedDataFetcher(`/api/projects/edit/${router.query.id}`, user, { name: editProjectName, domain:  editProjectDomain })
+            project.mutate({ ...project.data, name: editProjectName, domain: editProjectDomain })
+            setShowEditProjectDialog(false)
+          }} disabled={!project.data.name}>
+            Save changes
           </Button>
         </Box>
       )}>
