@@ -12,6 +12,9 @@ export default () => {
   useRequireUser(user, loading)
   const projects = useAuthedData<{ projects: (Project & { id: string })[] }>('/api/projects/list', user)
   const [ showNewProjectDialog, setShowNewProjectDialog ] = useState(false)
+  const [ showEditProjectDialog, setShowEditProjectDialog ] = useState(false)
+
+  const [ currentProject, setCurrentProject ] = useState<(Project & { id: string })>();
   const [ newProjectName, setNewProjectName ] = useState('')
 
   if (!user) return 'Loading...'
@@ -29,6 +32,41 @@ export default () => {
         setShowNewProjectDialog(false)
       }} disabled={!newProjectName}>
         Create
+      </button>
+    </Modal>
+    <Modal visible={showEditProjectDialog} setVisible={setShowEditProjectDialog}>
+      <h2>Edit project</h2>
+      <input placeholder='Project name' value={currentProject?.name} onChange={event => {
+        const { value } = event.target
+        setCurrentProject({
+          uid: currentProject.uid,
+          token: currentProject.token,
+          id: currentProject.id,
+          name: value,
+        })
+      }/*setCurrentProject((currentProject): Project => {
+        console.log(event)
+        return {
+            uid: currentProject.uid,
+            token: currentProject.token,
+            name: event?.target?.value
+          }
+        })*/} />
+      <button onClick={async () => {
+        await authedDataFetcher(`/api/projects/edit/${currentProject.id}`, user, { name: currentProject.name })
+        projects.revalidate()
+        setShowEditProjectDialog(false)
+        setCurrentProject(null)
+      }} disabled={!currentProject?.name}>
+        Save changes
+      </button>
+      <button onClick={async () => {
+        await authedDataFetcher(`/api/projects/delete/${currentProject.id}`, user)
+        projects.revalidate()
+        setShowEditProjectDialog(false)
+        setCurrentProject(null)
+      }}>
+        Delete Project
       </button>
     </Modal>
 
@@ -51,6 +89,12 @@ export default () => {
         {projects.data.projects.map((project) => (
           <li key={project.id}>
             <Link href='/project/[id]' as={`/project/${project.id}`}>{project.name}</Link>
+            <span onClick={async () => {
+              // await authedDataFetcher(`/api/projects/delete/${project.id}`, user, { })
+              // projects.revalidate()
+              setCurrentProject(project);
+              setShowEditProjectDialog(true)
+            }}> Edit project</span>
           </li>
         ))}
       </ul>
