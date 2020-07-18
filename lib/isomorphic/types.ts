@@ -1,1 +1,1 @@
-export type Project = { uid: string, name: string, token: string }
+export type Project = { uid: string, name: string, token: string, domain: string }
