@@ -6,14 +6,18 @@ import { Project } from 'lib/isomorphic/types'
 import Modal from 'components/modal'
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 export default () => {
+  const router = useRouter()
+  
   const [ user, loading ] = useAuthState(firebase.auth())
   useRequireUser(user, loading)
   const projects = useAuthedData<{ projects: (Project & { id: string })[] }>('/api/projects/list', user)
   const [ showNewProjectDialog, setShowNewProjectDialog ] = useState(false)
 
   const [ newProjectName, setNewProjectName ] = useState('')
+  const [ newProjectDomain, setNewProjectDomain ] = useState('')
 
   if (!user) return 'Loading...'
 
@@ -23,11 +27,13 @@ export default () => {
 
     <Modal visible={showNewProjectDialog} setVisible={setShowNewProjectDialog}>
       <h2>New project</h2>
-      <input placeholder='Project name' value={newProjectName} onChange={(event) => setNewProjectName(event.target.value)} />
+      <input placeholder='Name' value={newProjectName} onChange={(event) => setNewProjectName(event.target.value)} />
+      <input placeholder='Domain' value={newProjectDomain} onChange={(event) => setNewProjectDomain(event.target.value)} />
       <button onClick={async () => {
-        await authedDataFetcher('/api/projects/new', user, { name: newProjectName })
+        const { id } = await authedDataFetcher('/api/projects/new', user, { name: newProjectName, domain: newProjectDomain })
         projects.revalidate()
         setShowNewProjectDialog(false)
+        router.push('/project/[id]', `/project/${id}`)
       }} disabled={!newProjectName}>
         Create
       </button>

@@ -20,3 +20,11 @@ export const authenticate = (handler: (req: NextApiRequest, res: NextApiResponse
     await handler(req, res, user)
   }
 }
+
+export const validateDomain = (domain: string) => {
+  if (domain.length === 0) return false
+  if (domain.startsWith('.')) return false
+  if (domain.endsWith('.')) return false
+  if (domain.includes('..')) return false
+  return true
+}
