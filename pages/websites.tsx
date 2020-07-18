@@ -2,7 +2,7 @@ import { useAuthState } from 'react-firebase-hooks/auth'
 import firebase from 'lib/client/firebase'
 import { useRequireUser, useAuthedData } from 'lib/client/hooks'
 import { authedDataFetcher, logout } from 'lib/client/helpers'
-import { Project } from 'lib/isomorphic/types'
+import { Website } from 'lib/isomorphic/types'
 import Modal from 'components/modal'
 import { useState } from 'react'
 import Link from 'next/link'
@@ -22,11 +22,11 @@ export default () => {
   
   const [ user, loading ] = useAuthState(firebase.auth())
   useRequireUser(user, loading)
-  const projects = useAuthedData<{ projects: (Project & { id: string })[] }>('/api/projects/list', user)
-  const [ showNewProjectDialog, setShowNewProjectDialog ] = useState(false)
+  const websites = useAuthedData<{ websites: (Website & { id: string })[] }>('/api/websites/list', user)
+  const [ showNewWebsiteDialog, setShowNewWebsiteDialog ] = useState(false)
 
-  const [ newProjectName, setNewProjectName ] = useState('')
-  const [ newProjectDomain, setNewProjectDomain ] = useState('')
+  const [ newWebsiteName, setNewWebsiteName ] = useState('')
+  const [ newWebsiteDomain, setNewWebsiteDomain ] = useState('')
 
   if (!user) return <FullscreenLoader />
 
@@ -41,10 +41,10 @@ export default () => {
               Logout
             </Button>
 
-            {projects.data?.projects.length === 0 ? null : (
+            {websites.data?.websites.length === 0 ? null : (
               <Button variant='peripheral' color='alternate' onClick={() => {
-                setNewProjectName('')
-                setShowNewProjectDialog(true)
+                setNewWebsiteName('')
+                setShowNewWebsiteDialog(true)
               }}>
                 New
               </Button>
@@ -52,11 +52,11 @@ export default () => {
           </Box>
         </Box>
         
-        {projects.error ? (
-          <p>Error loading projects: {projects.error.message}</p>
-        ) : !projects.data ? (
-          <Loader text='Loading projects...' />
-        ) : projects.data.projects.length === 0 ? (
+        {websites.error ? (
+          <p>Error loading websites: {websites.error.message}</p>
+        ) : !websites.data ? (
+          <Loader text='Loading websites...' />
+        ) : websites.data.websites.length === 0 ? (
           <Box staccSpace={20}>
             <Text color='fg-muted'>
               Welcome, {user.displayName}! You don't have any websites with analytics setup... yet.{' '}
@@ -65,8 +65,8 @@ export default () => {
 
             <Box direction='row'>
               <Button variant='callout' color='accent' onClick={() => {
-                setNewProjectName('')
-                setShowNewProjectDialog(true)
+                setNewWebsiteName('')
+                setShowNewWebsiteDialog(true)
               }}>
                 New website
               </Button>
@@ -74,14 +74,13 @@ export default () => {
           </Box>
         ) : (
           <Waffle space={20} cellWidth={400}>
-            {projects.data.projects.map((project) => (
-              <Link href='/project/[id]' as={`/project/${project.id}`} key={project.id}>
+            {websites.data.websites.map((website) => (
+              <Link href='/website/[id]' as={`/website/${website.id}`} key={website.id}>
                 <a>
                   <Box $='article' staccSpace={8} background='bg-secondary' p={20} radius={12}>
-                    <Subsubtitle>{project.name}</Subsubtitle>
-                    <Text>{project.domain}</Text>
+                    <Subsubtitle>{website.name}</Subsubtitle>
+                    <Text>{website.domain}</Text>
                     <Text>69,420 pageviews in the last day</Text>
-                    {/* <a href={`/project/${project.id}`}>{project.name}</a> */}
                   </Box>
                 </a>
               </Link>
@@ -92,18 +91,18 @@ export default () => {
     </Box>
 
 
-    <Modal title='New website' visible={showNewProjectDialog} setVisible={setShowNewProjectDialog} controls={(
+    <Modal title='New website' visible={showNewWebsiteDialog} setVisible={setShowNewWebsiteDialog} controls={(
       <Button variant='callout' color='alternate' onClick={async () => {
-        const { id } = await authedDataFetcher('/api/projects/new', user, { name: newProjectName, domain: newProjectDomain })
-        projects.revalidate()
-        setShowNewProjectDialog(false)
-        router.push('/project/[id]', `/project/${id}`)
-      }} disabled={!newProjectName || !newProjectDomain}>
+        const { id } = await authedDataFetcher('/api/websites/new', user, { name: newWebsiteName, domain: newWebsiteDomain })
+        websites.revalidate()
+        setShowNewWebsiteDialog(false)
+        router.push('/website/[id]', `/website/${id}`)
+      }} disabled={!newWebsiteName || !newWebsiteDomain}>
         Create
       </Button>
     )}>
-      <Input placeholder='BridgeHacks' label='Name' id='name' value={newProjectName} onChange={(event) => setNewProjectName(event.target.value)}/>
-      <Input placeholder='bridgehacks.com' label='Domain' id='domain' value={newProjectDomain} onChange={(event) => setNewProjectDomain(event.target.value)} />
+      <Input placeholder='BridgeHacks' label='Name' id='name' value={newWebsiteName} onChange={(event) => setNewWebsiteName(event.target.value)}/>
+      <Input placeholder='bridgehacks.com' label='Domain' id='domain' value={newWebsiteDomain} onChange={(event) => setNewWebsiteDomain(event.target.value)} />
     </Modal>
   </>
 }

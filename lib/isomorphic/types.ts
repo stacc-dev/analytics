@@ -1,4 +1,4 @@
-export type Project = { uid: string, name: string, token: string, domain: string }
+export type Website = { uid: string, name: string, token: string, domain: string }
 export type Hit = { referrer: string, token: string, path: string }
 export type Color = 'fg-normal' | 'fg-muted' | 'bg-primary' | 'bg-secondary' | 'accent'
 

@@ -11,7 +11,7 @@ import Box from 'components/box'
 
 export default () => {
   const [ user, loading ] = useAuthState(firebase.auth())
-  useRequireNoUser(user, loading, '/projects')
+  useRequireNoUser(user, loading, '/websites')
 
   return <>
     <Box background='accent' py={100} px={10} align='center'>

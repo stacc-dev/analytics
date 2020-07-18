@@ -13,12 +13,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   const url = new URL(href)
   
-  const projects = await firebase.firestore().collection('projects').where('token', '==', token).get()
-  if (projects.empty) return res.status(400).send('Project not found dumbass')
-  const project = projects.docs[0]
+  const websites = await firebase.firestore().collection('websites').where('token', '==', token).get()
+  if (websites.empty) return res.status(400).send('Website not found dumbass')
+  const website = websites.docs[0]
 
-  if (project.get('domain') !== normalizeDomain(url.hostname) && url.hostname !== 'localhost') {
-    return res.status(400).send(`Wrong domain idiot, expected ${project.get('domain')}`)
+  if (website.get('domain') !== normalizeDomain(url.hostname) && url.hostname !== 'localhost') {
+    return res.status(400).send(`Wrong domain idiot, expected ${website.get('domain')}`)
   }
   
   const hit: Hit = {
