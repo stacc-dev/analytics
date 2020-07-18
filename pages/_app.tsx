@@ -1,9 +1,12 @@
+import 'global.css'
 import { AppProps } from 'next/app'
 import Head from 'next/head'
 
 export default ({ Component, pageProps }: AppProps) => <>
   <Head>
-    <link rel='stylesheet' href='https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/dark.min.css' />
+    <title>Stacc Analytics</title>
+    <link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap' rel='stylesheet' />
+    <script src='http://localhost:3000/api/script/t7byxkDUAQws'></script>
   </Head>
 
   <Component {...pageProps} />

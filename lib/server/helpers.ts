@@ -26,5 +26,12 @@ export const validateDomain = (domain: string) => {
   if (domain.startsWith('.')) return false
   if (domain.endsWith('.')) return false
   if (domain.includes('..')) return false
+  if (domain === 'localhost') return false
   return true
 }
+
+export const normalizeDomain = (domain: string) => domain
+  .replace(/^(https?\/\/)/, '')
+  .replace(/^www\./, '')
+  .replace(/\/.*$/, '')
+  .replace(/\:[0-9]{1-5}$/, '')

@@ -4,12 +4,12 @@ import firebase from 'lib/server/firebase'
 export default authenticate(async (req, res, user) => {
   const documents = await firebase
     .firestore()
-    .collection('projects')
+    .collection('websites')
     .where('uid', '==', user.uid)
     .get()
   
   return res.status(200).json({
-    projects: documents.docs.map((document) => ({
+    websites: documents.docs.map((document) => ({
       ...document.data(),
       id: document.id
     }))

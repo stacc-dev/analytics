@@ -1,0 +1,33 @@
+:root {
+  --bg-primary: #1B1F22;
+  --bg-secondary: #2C3038;
+  --fg-normal: #FFFFFF;
+  --fg-muted: #CFCFCF;
+  --fg-silent: #7D8288;
+  --accent: #3B5BDB;
+  --accent-modifier-hover: #486BF7;
+  --accent-modifier-fg-hover: #A5B5F8;
+  --danger-darker: #E03131;
+  --danger-lighter: #FF6B6B;
+}
+
+body {
+  margin: 0;
+  background: var(--bg-primary);
+  color: var(--fg-normal);
+  font-family: 'Inter', sans-serif;
+}
+
+#__next {
+  box-sizing: border-box;
+  height: 100vh;
+}
+
+* {
+  outline: none;
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration: none;
+}
