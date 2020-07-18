@@ -1,20 +1,42 @@
 import { ReactNode } from 'react'
+import Box from 'components/box'
+import Subtitle from 'components/subtitle'
 
 type Props = {
+  title: string,
   children: ReactNode,
   visible: boolean,
+  controls: ReactNode,
   setVisible?: (visible: boolean) => void
 }
 
-export default ({ children, visible, setVisible }: Props) => (
+export default ({ title, children, controls, visible, setVisible }: Props) => (
   <div className='container'>
     <div className='overlay' onClick={() => setVisible && setVisible(false)} />
 
-    <div className='modal'>
-      {children}
-    </div>
+    <Box background='bg-primary' staccSpace={26} p={20} maxWidth={600} radius={12}>
+      <Subtitle>{title}</Subtitle>
+
+      <Box staccSpace={16}>{children}</Box>
+
+      <Box direction='row' justify='flex-end'>
+        {controls}
+      </Box>
+    </Box>
 
     <style jsx>{`
+      @keyframes fade {
+        0% {
+          display: none;
+          opacity: 0;
+        }
+
+        100% {
+          display: flex;
+          opacity: 1;
+        }
+      }
+
       .container {
         position: fixed;
         top: 0;
@@ -29,7 +51,7 @@ export default ({ children, visible, setVisible }: Props) => (
       }
 
       .overlay {
-        background: #00000088;
+        background: #000000EE;
         position: fixed;
         top: 0;
         right: 0;
@@ -41,10 +63,7 @@ export default ({ children, visible, setVisible }: Props) => (
       .modal {
         width: 100%;
         max-width: 600px;
-        box-sizing: border-box;
-        padding: 24px;
-        background: #202B38;
-        border-radius: 8px;
+        border-radius: 12px;
       }
     `}</style>
   </div>

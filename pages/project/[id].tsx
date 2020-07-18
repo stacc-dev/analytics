@@ -3,9 +3,13 @@ import firebase from 'lib/client/firebase'
 import { useRequireUser, useAuthedData } from 'lib/client/hooks'
 import { useRouter } from 'next/router'
 import { Project } from 'lib/isomorphic/types'
-import Modal from 'components/modal';
 import { useState } from 'react'
 import { authedDataFetcher } from 'lib/client/helpers'
+import Modal from 'components/modal';
+import Button from 'components/button'
+import Box from 'components/box'
+import Input from 'components/input'
+import Title from 'components/title'
 
 export default () => {
   const router = useRouter()
@@ -24,38 +28,41 @@ export default () => {
 
   return (
     <main>
-      <h1>Project: {project.data.name}</h1>
+      <Title>Project: {project.data.name}</Title>
       
-      <Modal visible={showEditProjectDialog} setVisible={setShowEditProjectDialog}>
-        <h2>Edit project</h2>
+      <Modal title='Edit Project' visible={showEditProjectDialog} setVisible={setShowEditProjectDialog} controls={(
+        <Box direction='row' staccSpace={16}>
+          <Button variant='callout' color='alternate' onClick={async () => {
+            await authedDataFetcher(`/api/projects/edit/${router.query.id}`, user, { name: editProjectName, domain:  editProjectDomain })
+            project.mutate({ ...project.data, name: editProjectName, domain: editProjectDomain })
+            setShowEditProjectDialog(false)
+          }}  disabled={!project.data.name}>
+            Save changes
+          </Button>
 
-        <input placeholder='Name' value={editProjectName} onChange={(event) => setEditProjectName(event.target.value)} />
-        <input placeholder='Domain' value={editProjectDomain} onChange={(event) => setEditProjectDomain(event.target.value)} />
+          <Button variant='danger' color='secondary' onClick={async () => {
+            await authedDataFetcher(`/api/projects/delete/${router.query.id}`, user)
+            setShowEditProjectDialog(false)
+            router.push('/projects')
+          }}>
+            Delete Project
+          </Button>
+        </Box>
+      )}>
 
-        <button onClick={async () => {
-          await authedDataFetcher(`/api/projects/edit/${router.query.id}`, user, { name: editProjectName, domain: editProjectDomain })
-          project.mutate({ ...project.data, name: editProjectName, domain: editProjectDomain })
-          setShowEditProjectDialog(false)
-        }} disabled={!project.data.name}>
-          Save changes
-        </button>
+        <Input placeholder='BridgeHacks' label='Name' id='name' value={editProjectName} onChange={(event) => setEditProjectName(event.target.value)} />
+        <Input placeholder='bridgehacks.com' label='Domain' id='domain'value={editProjectDomain} onChange={(event) => setEditProjectDomain(event.target.value)} />
 
-        <button onClick={async () => {
-          await authedDataFetcher(`/api/projects/delete/${router.query.id}`, user)
-          setShowEditProjectDialog(false)
-          router.push('/projects')
-        }}>
-          Delete Project
-        </button>
+
       </Modal>
 
-      <button onClick={() => {
+      <Button variant='callout' color='accent' onClick={() => {
         setEditProjectName(project.data.name)
         setEditProjectDomain(project.data.domain)
         setShowEditProjectDialog(true)
       }}>
         Edit
-      </button>
+      </Button>
     </main>
   )
 }
