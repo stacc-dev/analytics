@@ -4,7 +4,10 @@
   --fg-normal: #ffffff;
   --fg-muted: #cfcfcf;
   --fg-silent: #7d8288;
+  --accent-even-lighter: #748ffc;
+  --accent-lighter: #4c6ef5;
   --accent: #3b5bdb;
+  --accent-darker: #364fc7;
   --accent-modifier-hover: #486bf7;
   --accent-modifier-fg-hover: #a5b5f8;
   --danger-darker: #e03131;

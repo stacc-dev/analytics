@@ -24,7 +24,12 @@ export type PaddingProps = {
 export type FlexProps = {
   direction?: 'column' | 'row' | 'column-reverse' | 'row-reverse'
   align?: 'center' | 'flex-start' | 'flex-end'
-  justify?: 'center' | 'flex-start' | 'flex-end' | 'space-between'
+  justify?:
+    | 'center'
+    | 'flex-start'
+    | 'flex-end'
+    | 'space-between'
+    | 'space-evenly'
   noFlex?: boolean
   expand?: number | boolean | string
 }

@@ -227,27 +227,36 @@ export default () => {
               </Box>
 
               <Box
-                staccSpace={12}
+                staccSpace={24}
                 direction='row'
+                pt={24}
                 mobileProps={{
                   direction: 'column',
                   justify: 'center',
-                  align: 'flex-start'
+                  align: 'center'
                 }}
-                justify='space-between'
+                justify='space-evenly'
                 align='center'
               >
                 <Box staccSpace={24}>
                   <Subsubtitle>Operating Systems</Subsubtitle>
                   <div className='plot'>
                     <RadialChart
+                      colorRange={[
+                        'var(--accent)',
+                        'var(--accent-lighter)',
+                        'var(--accent-even-lighter)',
+                        'var(--accent-darker)'
+                      ]}
                       showLabels={true}
                       labelsStyle={{
                         fill: 'white',
                         fontSize: '1.5rem',
-                        textAlign: 'center'
+                        textAlign: 'center',
+                        fontWeight: 600
                       }}
-                      height={400}
+                      margin={{ left: 50, right: 50, top: 50, bottom: 50 }}
+                      height={500}
                       width={400}
                       data={parseOses(
                         hits.data.hits.reduce(
@@ -268,13 +277,21 @@ export default () => {
                   <Subsubtitle>Languages</Subsubtitle>
                   <div className='plot'>
                     <RadialChart
+                      colorRange={[
+                        'var(--accent)',
+                        'var(--accent-lighter)',
+                        'var(--accent-even-lighter)',
+                        'var(--accent-darker)'
+                      ]}
+                      margin={{ left: 50, right: 50, top: 50, bottom: 50 }}
                       showLabels={true}
                       labelsStyle={{
                         fill: 'white',
                         fontSize: '1.5rem',
-                        textAlign: 'center'
+                        textAlign: 'center',
+                        fontWeight: 600
                       }}
-                      height={400}
+                      height={500}
                       width={400}
                       data={parseLanguages(
                         hits.data.hits.reduce(
