@@ -37,30 +37,30 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE')
   res.setHeader('Vary', 'Access-Control-Request-Headers')
   if(req.method === 'OPTIONS') {
-    res.status(200)
+    res.status(200).end()
   } else {
-  if (req.method !== 'POST') return res.status(400).send('Unsupported method')
+    if (req.method !== 'POST') return res.status(400).send('Unsupported method')
 
-  const { href, referrer, token, os, language } = req.body
-  if (!href) return res.status(400).send('No href specified')
-  if (referrer == null || referrer == undefined) return res.status(400).send('No referrer specified')
+    const { href, referrer, token, os, language } = req.body
+    if (!href) return res.status(400).send('No href specified')
+    if (referrer == null || referrer == undefined) return res.status(400).send('No referrer specified')
 
-  const url = new URL(href)
-  
-  const websites = await firebase.firestore().collection('websites').where('token', '==', token).get()
-  if (websites.empty) return res.status(400).send('Website not found dumbass')
-  const website = websites.docs[0]
+    const url = new URL(href)
+    
+    const websites = await firebase.firestore().collection('websites').where('token', '==', token).get()
+    if (websites.empty) return res.status(400).send('Website not found dumbass')
+    const website = websites.docs[0]
 
-  if (website.get('domain') !== normalizeDomain(url.hostname) && url.hostname !== 'localhost') {
-    return res.status(400).send(`Wrong domain idiot, expected ${website.get('domain')}`)
+    if (website.get('domain') !== normalizeDomain(url.hostname) && url.hostname !== 'localhost') {
+      return res.status(400).send(`Wrong domain idiot, expected ${website.get('domain')}`)
+    }
+
+    const promises = []
+    for (let type of [ 'year', 'month', 'day', 'hour' ]) {
+      promises.push(track(token, type, os, language, url.pathname, referrer))
+    }
+    await Promise.all(promises)
+
+    return res.status(200).json({})
   }
-
-  const promises = []
-  for (let type of [ 'year', 'month', 'day', 'hour' ]) {
-    promises.push(track(token, type, os, language, url.pathname, referrer))
-  }
-  await Promise.all(promises)
-
-  return res.status(200).json({})
-}
 }
