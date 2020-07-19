@@ -7,10 +7,18 @@ type Props = {
   children: ReactNode
   visible: boolean
   controls: ReactNode
+  leftControls?: ReactNode
   setVisible?: (visible: boolean) => void
 }
 
-export default ({ title, children, controls, visible, setVisible }: Props) => (
+export default ({
+  title,
+  children,
+  controls,
+  visible,
+  setVisible,
+  leftControls
+}: Props) => (
   <div className='container'>
     <div className='overlay' onClick={() => setVisible && setVisible(false)} />
 
@@ -25,8 +33,19 @@ export default ({ title, children, controls, visible, setVisible }: Props) => (
 
       <Box staccSpace={16}>{children}</Box>
 
-      <Box direction='row' justify='flex-end'>
-        {controls}
+      <Box
+        direction='row'
+        justify={leftControls ? 'space-between' : 'flex-end'}
+      >
+        {leftControls && (
+          <Box direction='row' staccSpace={16}>
+            {leftControls}
+          </Box>
+        )}
+
+        <Box direction='row' staccSpace={16}>
+          {controls}
+        </Box>
       </Box>
     </Box>
 

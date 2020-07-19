@@ -1,8 +1,13 @@
 import { useAuthState } from 'react-firebase-hooks/auth'
 import firebase from 'lib/client/firebase'
-import { useRequireUser, useAuthedData } from 'lib/client/hooks'
+import {
+  useRequireUser,
+  useAuthedData,
+  useRealtimeUsers
+} from 'lib/client/hooks'
 import { useRouter } from 'next/router'
 import { Website, Hit } from 'lib/isomorphic/types'
+import { softMerge } from 'lib/isomorphic/helpers'
 import { useState } from 'react'
 import {
   authedDataFetcher,
@@ -37,6 +42,11 @@ import Text from 'components/text'
 import Subtitle from 'components/subtitle'
 import Subsubtitle from 'components/subsubtitle'
 import Select from 'components/select'
+
+const domain =
+  typeof window === 'object'
+    ? window.location.protocol + '//' + window.location.host
+    : 'https://analytics.stacc.cc'
 
 export default () => {
   const router = useRouter()
@@ -74,6 +84,9 @@ export default () => {
   const [showEditWebsiteDialog, setShowEditWebsiteDialog] = useState(false)
   const [editWebsiteName, setEditWebsiteName] = useState('')
   const [editWebsiteDomain, setEditWebsiteDomain] = useState('')
+  const [showDeleteWebsiteDialog, setShowDeleteWebsiteDialog] = useState(false)
+
+  const realtimeUsers = useRealtimeUsers(website.data?.token, user)
 
   if (website.error) return website.error.message
   if (!website.data || !user) return <FullscreenLoader />
@@ -132,7 +145,7 @@ export default () => {
                 Just put this snippet of code in the head tag of your website:
               </Text>
               <code>
-                {`<script src='https://analytics.stacc.cc/api/script/${website.data.token}'></script>`}
+                {`<script src='${domain}/api/script/${website.data.token}'></script>`}
               </code>
             </Box>
           ) : (
@@ -154,7 +167,12 @@ export default () => {
             <Box>
               <Box
                 direction='row'
-                mobileProps={{ direction: 'column' }}
+                mobileProps={{
+                  direction: 'column',
+                  justify: 'flex-start',
+                  pl: 0
+                }}
+                staccSpace={16}
                 pl={100}
               >
                 <Box
@@ -177,6 +195,18 @@ export default () => {
                       ).hits
                     }
                   </Text>
+                </Box>
+
+                <Box
+                  $='article'
+                  staccSpace={8}
+                  background='bg-secondary'
+                  p={20}
+                  radius={8}
+                >
+                  <Subsubtitle>Realtime users</Subsubtitle>
+
+                  <Text>{realtimeUsers}</Text>
                 </Box>
               </Box>
 
@@ -226,6 +256,67 @@ export default () => {
                 </div>
               </Box>
 
+              <Box direction='column'>
+                <Subsubtitle>Pages</Subsubtitle>
+                <Box staccSpace={8} py={16}>
+                  {hits.data.hits
+                    ? Object.entries(
+                        hits.data.hits.reduce((past, current) => ({
+                          ...past,
+                          paths: softMerge(past.paths ?? {}, current.paths ?? {})
+                        })).paths
+                      )
+                        .sort((a, b) => (b[1] > a[1] ? 1 : -1))
+                        .map((path) => (
+                          <Box
+                            justify='space-between'
+                            direction='row'
+                            p={8}
+                            background='bg-secondary'
+                            key={path[0]}
+                          >
+                            <Box align='flex-start'>
+                              <Text>{path[0]}</Text>
+                            </Box>
+                            <Box align='flex-end'>
+                              <Text>{path[1]}</Text>
+                            </Box>
+                          </Box>
+                        ))
+                    : null}
+                </Box>
+                <Subsubtitle>Referrers</Subsubtitle>
+                <Box staccSpace={8} py={16}>
+                  {hits.data.hits
+                    ? Object.entries(
+                        hits.data.hits.reduce((past, current) => ({
+                          ...past,
+                          referrers: softMerge(
+                            past.referrers ?? {},
+                            current.referrers ?? {}
+                          )
+                        })).referrers
+                      )
+                        .sort((a, b) => (b[1] > a[1] ? 1 : -1))
+                        .map((referrer) => (
+                          <Box
+                            justify='space-between'
+                            direction='row'
+                            p={8}
+                            background='bg-secondary'
+                            key={referrer[0]}
+                          >
+                            <Box align='flex-start'>
+                              <Text>{referrer[0]}</Text>
+                            </Box>
+                            <Box align='flex-end'>
+                              <Text>{referrer[1]}</Text>
+                            </Box>
+                          </Box>
+                        ))
+                    : null}
+                </Box>
+              </Box>
               <Box
                 staccSpace={24}
                 direction='row'
@@ -320,21 +411,31 @@ export default () => {
         title='Edit website'
         visible={showEditWebsiteDialog}
         setVisible={setShowEditWebsiteDialog}
+        leftControls={
+          <Button
+            variant='danger'
+            color='primary'
+            onClick={async () => {
+              // await authedDataFetcher(
+              //   `/api/websites/delete/${router.query.id}`,
+              //   user
+              // )
+              // setShowEditWebsiteDialog(false)
+              // router.push('/websites')
+              setShowDeleteWebsiteDialog(true)
+            }}
+          >
+            Delete
+          </Button>
+        }
         controls={
-          <Box direction='row' staccSpace={16}>
+          <>
             <Button
-              variant='danger'
-              color='secondary'
-              onClick={async () => {
-                await authedDataFetcher(
-                  `/api/websites/delete/${router.query.id}`,
-                  user
-                )
-                setShowEditWebsiteDialog(false)
-                router.push('/websites')
-              }}
+              variant='peripheral'
+              color='primary'
+              onClick={() => setShowEditWebsiteDialog(false)}
             >
-              Delete
+              Cancel
             </Button>
 
             <Button
@@ -353,11 +454,18 @@ export default () => {
                 })
                 setShowEditWebsiteDialog(false)
               }}
-              disabled={!website.data.name}
+              disabled={
+                !editWebsiteName ||
+                !editWebsiteDomain ||
+                !(
+                  editWebsiteName !== website.data.name ||
+                  editWebsiteDomain !== website.data.domain
+                )
+              }
             >
-              Save changes
+              Save
             </Button>
-          </Box>
+          </>
         }
       >
         <Input
@@ -374,6 +482,27 @@ export default () => {
           value={editWebsiteDomain}
           onChange={(event) => setEditWebsiteDomain(event.target.value)}
         />
+      </Modal>
+
+      <Modal
+        title='Are you sure?'
+        visible={showDeleteWebsiteDialog}
+        setVisible={setShowDeleteWebsiteDialog}
+        controls={
+          <>
+            <Button variant='peripheral' color='primary'>
+              Cancel
+            </Button>
+            <Button variant='callout' color='danger'>
+              Delete
+            </Button>
+          </>
+        }
+      >
+        <Text>
+          Continuing will permanently delete your website {website.data?.name}.
+          This operation is irreversible. Make sure you know what you're doing!
+        </Text>
       </Modal>
 
       <style jsx>{`

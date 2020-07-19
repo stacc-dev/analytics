@@ -36,3 +36,25 @@ export const getRangeStartTime = (
   }
   return rangeStartTime
 }
+
+export const softMerge = (
+  first: { [key: string]: any },
+  second: { [key: string]: any }
+) => {
+  try {
+    const merged = { ...first }
+
+    for (const [ key, value ] of Object.entries(second)) {
+      if (typeof merged[key] !== typeof value) {
+        merged[key] = value
+      } else if (typeof value === 'number') {
+        merged[key] = merged[key] + value
+      }
+    }
+
+    return merged
+  } catch (error) {
+    console.error(error)
+    return { ...first, ...second }
+  }
+}
