@@ -39,7 +39,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   if(req.method === 'OPTIONS') {
     res.setHeader('Access-Control-Allow-Origin', '*')
     res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE')
-    res.setHeader('Vary', 'Access-Control-Request-Headers')
     res.status(200).end()
   } else {
     if (req.method !== 'POST') return res.status(400).send('Unsupported method')
