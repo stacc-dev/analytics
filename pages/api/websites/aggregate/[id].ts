@@ -12,10 +12,10 @@ export default authenticate(async (req, res, user) => {
     .collection('websites')
     .doc(req.query.id as string)
     .get()
-  if (!website.exists) return res.status(404).send('Website not found, dumbass')
-  // if (website.get('uid') !== user.uid) {
-  //   return res.status(401).send('You aren\'t the owner, dumbass')
-  // }
+  if (!website.exists) return res.status(404).send('Website not found, nice guy')
+  if (website.get('uid') !== user.uid) {
+    return res.status(401).send('You aren\'t the owner, nice guy')
+  }
 
   const rangeStartTime = getRangeStartTime(rangeType, true)
   const collectionName =

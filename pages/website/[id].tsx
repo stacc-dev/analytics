@@ -414,12 +414,6 @@ export default () => {
             variant='danger'
             color='primary'
             onClick={async () => {
-              // await authedDataFetcher(
-              //   `/api/websites/delete/${router.query.id}`,
-              //   user
-              // )
-              // setShowEditWebsiteDialog(false)
-              // router.push('/websites')
               setShowDeleteWebsiteDialog(true)
             }}
           >
@@ -488,10 +482,17 @@ export default () => {
         setVisible={setShowDeleteWebsiteDialog}
         controls={
           <>
-            <Button variant='peripheral' color='primary'>
+            <Button variant='peripheral' color='primary' onClick={() => setShowDeleteWebsiteDialog(false)}>
               Cancel
             </Button>
-            <Button variant='callout' color='danger'>
+            <Button variant='callout' color='danger' onClick={async () => {
+              await authedDataFetcher(
+                `/api/websites/delete/${router.query.id}`,
+                user
+              )
+              setShowEditWebsiteDialog(false)
+              router.push('/websites')
+            }}>
               Delete
             </Button>
           </>

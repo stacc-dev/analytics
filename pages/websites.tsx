@@ -22,7 +22,7 @@ export default () => {
 
   const [user, loading] = useAuthState(firebase.auth())
   useRequireUser(user, loading)
-  const websites = useAuthedData<{ websites: (Website & { id: string })[] }>(
+  const websites = useAuthedData<{ websites: (Website & { id: string, totalHits: number })[] }>(
     '/api/websites/list',
     user
   )
@@ -113,7 +113,7 @@ export default () => {
                     >
                       <Subsubtitle>{website.name}</Subsubtitle>
                       <Text>{website.domain}</Text>
-                      <Text>69,420 pageviews in the last day</Text>
+                      <Text>{website.totalHits} pageviews in the last day</Text>
                     </Box>
                   </a>
                 </Link>

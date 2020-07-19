@@ -74,7 +74,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       .collection('websites')
       .where('token', '==', token)
       .get()
-    if (websites.empty) return res.status(400).send('Website not found dumbass')
+    if (websites.empty) return res.status(400).send('Website not found nice guy')
     const website = websites.docs[0]
 
     if (

@@ -11,6 +11,9 @@ export default ({ Component, pageProps }: AppProps) => (
         rel='stylesheet'
       />
       <script src='/api/script/t7byxkDUAQws'></script>
+      <link href='/favicon.png' rel='shortcut icon' />
+      <link href='/favicon.png' rel='icon' />
+      <link href='/favicon.png' rel='favicon' />
     </Head>
 
     <Component {...pageProps} />
