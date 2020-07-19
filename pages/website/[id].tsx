@@ -5,14 +5,12 @@ import { useRouter } from 'next/router'
 import { Website, Hit } from 'lib/isomorphic/types'
 import { useState } from 'react'
 import { authedDataFetcher } from 'lib/client/helpers'
-import { format, eachHourOfInterval, subDays } from 'date-fns'
+import { format, eachHourOfInterval, eachMonthOfInterval, eachDayOfInterval, subDays, subYears, subMonths } from 'date-fns'
 
 import {
   FlexibleWidthXYPlot,
-  DiscreteColorLegend,
   YAxis,
   XAxis,
-  Crosshair,
   LineSeries
 } from 'react-vis'
 
@@ -24,13 +22,7 @@ import Input from 'components/input'
 import Title from 'components/title'
 import Text from 'components/text'
 import Subsubtitle from 'components/subsubtitle'
-import Subtitle from 'components/subtitle'
 import Select from 'components/select'
-
-const lastDayHours = eachHourOfInterval({
-  start: subDays(new Date(), 1),
-  end: new Date()
-}).map((date) => date.getTime())
 
 export default () => {
   const router = useRouter()
@@ -38,6 +30,13 @@ export default () => {
   const [ rangeType, setRangeType ] = useState('day')
   const [ user, loading ] = useAuthState(firebase.auth())
   useRequireUser(user, loading)
+
+  const periodFunction = rangeType === 'year' ? eachMonthOfInterval : rangeType === 'month' ? eachDayOfInterval : eachHourOfInterval
+  const subFunction = rangeType === 'year' ? subYears : rangeType === 'month' ? subMonths : subDays
+  const periods = periodFunction({
+    start: subFunction(new Date(), 1),
+    end: new Date()
+  }).map((date) => date.getTime())
 
   const website = useAuthedData<Website>(`/api/websites/get/${router.query.id}`, user)
   const hits = useAuthedData<{ hits: Hit[] }>(`/api/websites/aggregate/${router.query.id}?rangeType=${rangeType}`, user)
@@ -50,8 +49,8 @@ export default () => {
   if (!website.data || !user) return <FullscreenLoader />
 
   return <>
-    <Box background='bg-primary' py={50} px={10} align='center'>
-      <Box direction='column' maxWidth={900}>
+    <Box background='bg-primary' staccSpace={52} py={50} px={10} align='center'>
+      <Box direction='column' staccSpace={16} maxWidth={900}>
         <Box staccSpace={12} direction='row' mobileProps={{ direction: 'column', justify: 'center', align: 'flex-start' }} justify='space-between' align='center'>
           <Title>{website.data.name}</Title>
 
@@ -65,65 +64,74 @@ export default () => {
             </Button>
           </Box>
         </Box>
+      
+        <Box direction='row'>
+          <Select
+            options={[ 'Past year', 'Past month', 'Past day' ]}
+            values={[ 'year', 'month', 'day' ]}
+            selected={rangeType}
+            onChange={(event) => setRangeType(event.target.value)}
+          />
+        </Box>
       </Box>
 
-      <Box direction='column' staccSpace={38} maxWidth={1200}>
+      <Box direction='column' staccSpace={38} maxWidth={1400}>
         {hits.error ? (
           <p>Error loading hits: {hits.error.message}</p>
         ) : !hits.data ? (
           <Loader text='Loading hits...' />
         ) : (
-          <>
-          <Box staccSpace={24}>
-            <Box direction='row'>
-            <Select options={['Yearly', 'Monthly', 'Daily']} values={['year', 'month', 'day']} selected={rangeType} onChange={(event) => {
-              const { value } = event.target;
-              setRangeType(value)
-            }}/>
-            </Box>
-            <Box staccSpace={20} direction='row'>
+          <Box>
+            <Box direction='row' pl={100}>
               <Box $='article' staccSpace={8} background='accent' p={20} radius={8}>
                 <Subsubtitle>Total views</Subsubtitle>
-                {/* typescript doesn't like this but it works */}
-                {/* @ts-ignore */}
+                
                 <Text>
-                {hits.data.hits.reduce((past, current) => ({
-                  ...past,
-                  hits: past.hits + current.hits
-                })).hits}
+                  {hits.data.hits.reduce((past, current) => ({
+                    ...past,
+                    hits: past.hits + current.hits
+                  }), { hits: 0 }).hits}
                 </Text>
               </Box>
             </Box>
-          </Box>
-          <Box>
-          <Subtitle>Total Views Graph</Subtitle>
-          <div className='plot'>
-            <FlexibleWidthXYPlot height={330} margin={{ left: 100, right: 100 }} yPadding={10}>
-              <YAxis />
-              <XAxis tickTotal={8} tickFormat={(when) => format(new Date(when), `haaa`.toLowerCase())} />
 
-              <LineSeries
-                data={lastDayHours.map((hour) => {
-                  const hit = hits.data.hits.find(({ rangeStartTime }) => rangeStartTime === hour)
-                  if (!hit) return {
-                    x: hour,
-                    y: 0
-                  }
-                  return {
-                    x: hit.rangeStartTime,
-                    y: hit.hits
-                  }
-                })}
+            <Box>
+              <div className='plot'>
+                <FlexibleWidthXYPlot height={330} margin={{ left: 100, right: 100 }} yPadding={10}>
+                  <YAxis />
+                  <XAxis tickTotal={8} tickFormat={(when) => {
+                    const date = new Date(when)
+                    if (rangeType === 'year') {
+                      return format(date, `MMM yyyy`)
+                    } else if (rangeType === 'month') {
+                      return format(date, `MMM do`)
+                    } else {
+                      return format(date, `haaa`)
+                    }
+                  }} />
 
-                style={{
-                  fill: 'transparent',
-                  strokeWidth: 2
-                }}
-              />
-            </FlexibleWidthXYPlot>
-          </div>
+                  <LineSeries
+                    data={periods.map((period) => {
+                      const hit = hits.data.hits.find(({ rangeStartTime }) => rangeStartTime === period)
+                      if (!hit) return {
+                        x: period,
+                        y: 0
+                      }
+                      return {
+                        x: hit.rangeStartTime,
+                        y: hit.hits
+                      }
+                    })}
+
+                    style={{
+                      fill: 'transparent',
+                      strokeWidth: 2
+                    }}
+                  />
+                </FlexibleWidthXYPlot>
+              </div>
+            </Box>
           </Box>
-          </>
         )}
       </Box>
     </Box>

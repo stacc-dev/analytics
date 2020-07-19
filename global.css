@@ -62,3 +62,7 @@ a {
 .rv-discrete-color-legend svg path {
   stroke-width: 20px;
 }
+
+.rv-xy-plot__series.rv-xy-plot__series--line {
+  stroke: var(--accent) !important;
+}

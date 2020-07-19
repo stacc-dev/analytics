@@ -1,24 +1,24 @@
-import { startOfYear, startOfMonth, startOfDay, startOfHour } from 'date-fns'
+import { startOfYear, startOfMonth, startOfDay, startOfHour, subYears, subMonths, subDays, subMinutes } from 'date-fns'
+import { RangeType } from 'lib/isomorphic/types'
 
-export type RangeType ='year' | 'month' | 'day' | 'hour'
-export const getRangeStartTime = (rangeType: RangeType) => {
+export const getRangeStartTime = (rangeType: RangeType, absolute: boolean = false) => {
   const now = new Date()
   let rangeStartTime: Date
   switch (rangeType) {
     case 'year': {
-      rangeStartTime = startOfYear(now)
+      rangeStartTime = absolute ? subYears(now, 1) : startOfYear(now)
       break
     }
     case 'month': {
-      rangeStartTime = startOfMonth(now)
+      rangeStartTime = absolute ? subMonths(now, 1) : startOfMonth(now)
       break
     }
     case 'day': {
-      rangeStartTime = startOfDay(now)
+      rangeStartTime = absolute ? subDays(now, 1) : startOfDay(now)
       break
     }
     case 'hour': {
-      rangeStartTime = startOfHour(now)
+      rangeStartTime = absolute ? subMinutes(now, 1) : startOfHour(now)
       break
     }
   }

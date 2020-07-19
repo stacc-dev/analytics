@@ -998,6 +998,14 @@
     lodash "^4.17.19"
     to-fast-properties "^2.0.0"
 
+"@crypticat/ionicons@^0.1.5":
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@crypticat/ionicons/-/ionicons-0.1.5.tgz#296b35256fe977f58e3c5920c7694a92330e6ef0"
+  integrity sha512-/L1vJ/kGdy+DFv97Rdg5KaXzANwjiEqHUPOZ85L5zq1LW4au7Q14eY6sUHTdNJXrqpucmUlJEchgcpPEFuC2uA==
+  dependencies:
+    dotenv "^8.2.0"
+    react "^16.13.1"
+
 "@firebase/analytics-types@0.3.1":
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/@firebase/analytics-types/-/analytics-types-0.3.1.tgz#3c5f5d71129c88295e17e914e34b391ffda1723c"
@@ -2967,6 +2975,11 @@ dot-prop@^5.2.0:
   integrity sha512-uEUyaDKoSQ1M4Oq8l45hSE26SnTxL6snNnqvK/VWx5wJhmff5z0FUVJDKDanor/6w3kzE3i7XZOk+7wC0EXr1A==
   dependencies:
     is-obj "^2.0.0"
+
+dotenv@^8.2.0:
+  version "8.2.0"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-8.2.0.tgz#97e619259ada750eea3e4ea3e26bceea5424b16a"
+  integrity sha512-8sJ78ElpbDJBHNeBzUbUVLsqKdccaa/BXF1uPTw3GrvQTBgrQrtObr2mUrE38vzYd8cEv+m/JBfDLioYcfXoaw==
 
 duplexify@^3.4.2, duplexify@^3.5.0, duplexify@^3.6.0:
   version "3.7.1"

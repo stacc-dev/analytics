@@ -28,3 +28,5 @@ export type Hit = {
   paths?: { [key: string]: number },
   referrers?: { [key: string]: number }
 }
+
+export type RangeType = 'year' | 'month' | 'day' | 'hour'

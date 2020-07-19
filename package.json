@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@crypticat/ionicons": "^0.1.5",
     "date-fns": "^2.15.0",
     "firebase": "^7.16.1",
     "firebase-admin": "^9.0.0",
