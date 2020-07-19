@@ -37,7 +37,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE')
   res.setHeader('Vary', 'Access-Control-Request-Headers')
 
-  if (req.method !== 'POST') return res.status(400).send('Unsupported method')
+  if (req.method !== 'POST' && req.method !== 'OPTIONS') return res.status(400).send('Unsupported method')
 
   const { href, referrer, token, os, language } = req.body
   if (!href) return res.status(400).send('No href specified')
