@@ -295,7 +295,7 @@ export default () => {
                             past.referrers ?? {},
                             current.referrers ?? {}
                           )
-                        })).referrers
+                        }))?.referrers || {}
                       )
                         .sort((a, b) => (b[1] > a[1] ? 1 : -1))
                         .map((referrer) => (
