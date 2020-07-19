@@ -63,19 +63,19 @@ export const getFlexStyles = (props: FlexProps) => {
 export const getPaddingStyles = (props: PaddingProps) => {
   const lines = []
 
-  if (props.p) lines.push(`padding: ${props.p}px;`)
-  if (props.px) {
+  if (typeof props.p === 'number') lines.push(`padding: ${props.p}px;`)
+  if (typeof props.px === 'number') {
     lines.push(`padding-left: ${props.px}px;`)
     lines.push(`padding-right: ${props.px}px;`)
   }
-  if (props.py) {
+  if (typeof props.py === 'number') {
     lines.push(`padding-top: ${props.py}px;`)
     lines.push(`padding-bottom: ${props.py}px;`)
   }
-  if (props.pt) lines.push(`padding-top: ${props.pt}px;`)
-  if (props.pb) lines.push(`padding-bottom: ${props.pb}px;`)
-  if (props.pl) lines.push(`padding-left: ${props.pl}px;`)
-  if (props.pr) lines.push(`padding-right: ${props.pr}px;`)
+  if (typeof props.pt === 'number') lines.push(`padding-top: ${props.pt}px;`)
+  if (typeof props.pb === 'number') lines.push(`padding-bottom: ${props.pb}px;`)
+  if (typeof props.pl === 'number') lines.push(`padding-left: ${props.pl}px;`)
+  if (typeof props.pr === 'number') lines.push(`padding-right: ${props.pr}px;`)
 
   return lines.join('\n')
 }

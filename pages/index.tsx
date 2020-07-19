@@ -144,7 +144,7 @@ export default () => {
           <Subtitle color='fg-normal'>What's not to love?</Subtitle>
           <Text color='fg-normal'>
             Free, open-source, realtime analytics that load quickly and respect
-            your users' privacy. And it's as easy as one click to get started.
+            your users' privacy. As easy as one or two clicks.
           </Text>
           <Button
             variant='callout'

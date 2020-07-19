@@ -64,9 +64,9 @@ export default ({
           ${
             mobileProps
               ? `
-            ${getFlexStyles(mobileProps)}
-            ${getPaddingStyles(mobileProps)}
-          `
+                ${getFlexStyles(mobileProps)}
+                ${getPaddingStyles(mobileProps)}
+              `
               : ''
           }
         }
@@ -74,11 +74,18 @@ export default ({
         ${$} :global(> *:not(:last-child)) {
           ${
             staccSpace
-              ? `margin-${
+              ? `
+                margin-${
                   (mobileProps?.direction ?? direction).startsWith('row')
                     ? 'right'
                     : 'bottom'
-                }: ${staccSpace}px;`
+                }: ${staccSpace}px;
+                margin-${
+                  (mobileProps?.direction ?? direction).startsWith('row')
+                    ? 'bottom'
+                    : 'right'
+                }: 0;
+              `
               : ''
           }
         }

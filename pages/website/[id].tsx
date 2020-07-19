@@ -91,6 +91,18 @@ export default () => {
   if (website.error) return website.error.message
   if (!website.data || !user) return <FullscreenLoader />
 
+  const referrerData = hits.data?.hits
+    ? (Object.entries(
+        hits.data.hits.reduce((past, current) => ({
+          ...past,
+          referrers: softMerge(
+            past.referrers ?? {},
+            current.referrers ?? {}
+          )
+        }))?.referrers || {}
+      ).sort((a, b) => (b[1] > a[1] ? 1 : -1)))
+    : []  
+
   return (
     <>
       <Box
@@ -256,67 +268,76 @@ export default () => {
                 </div>
               </Box>
 
-              <Box direction='column'>
-                <Subsubtitle>Pages</Subsubtitle>
-                <Box staccSpace={8} py={16}>
-                  {hits.data.hits
-                    ? Object.entries(
-                        hits.data.hits.reduce((past, current) => ({
-                          ...past,
-                          paths: softMerge(past.paths ?? {}, current.paths ?? {})
-                        })).paths
-                      )
-                        .sort((a, b) => (b[1] > a[1] ? 1 : -1))
-                        .map((path) => (
-                          <Box
-                            justify='space-between'
-                            direction='row'
-                            p={8}
-                            background='bg-secondary'
-                            key={path[0]}
-                          >
-                            <Box align='flex-start'>
-                              <Text>{path[0]}</Text>
+              <Box
+                direction='row'
+                mobileProps={{ direction: 'column', px: 0 }}
+                staccSpace={16}
+                pt={80}
+                px={100}
+              >
+                <Box staccSpace={8} expand>
+                  <Subsubtitle>Pages</Subsubtitle>
+                  <Box staccSpace={8} py={16}>
+                    {hits.data.hits
+                      ? Object.entries(
+                          hits.data.hits.reduce((past, current) => ({
+                            ...past,
+                            paths: softMerge(
+                              past.paths ?? {},
+                              current.paths ?? {}
+                            )
+                          })).paths
+                        )
+                          .sort((a, b) => (b[1] > a[1] ? 1 : -1))
+                          .map((path) => (
+                            <Box
+                              justify='space-between'
+                              direction='row'
+                              p={8}
+                              background='bg-secondary'
+                              key={path[0]}
+                              radius={2}
+                            >
+                              <Box align='flex-start'>
+                                <Text>{path[0]}</Text>
+                              </Box>
+                              <Box align='flex-end'>
+                                <Text>{path[1]}</Text>
+                              </Box>
                             </Box>
-                            <Box align='flex-end'>
-                              <Text>{path[1]}</Text>
-                            </Box>
-                          </Box>
-                        ))
-                    : null}
+                          ))
+                      : null}
+                  </Box>
                 </Box>
-                <Subsubtitle>Referrers</Subsubtitle>
-                <Box staccSpace={8} py={16}>
-                  {hits.data.hits
-                    ? Object.entries(
-                        hits.data.hits.reduce((past, current) => ({
-                          ...past,
-                          referrers: softMerge(
-                            past.referrers ?? {},
-                            current.referrers ?? {}
-                          )
-                        }))?.referrers || {}
-                      )
-                        .sort((a, b) => (b[1] > a[1] ? 1 : -1))
-                        .map((referrer) => (
-                          <Box
-                            justify='space-between'
-                            direction='row'
-                            p={8}
-                            background='bg-secondary'
-                            key={referrer[0]}
-                          >
-                            <Box align='flex-start'>
-                              <Text>{referrer[0]}</Text>
-                            </Box>
-                            <Box align='flex-end'>
-                              <Text>{referrer[1]}</Text>
-                            </Box>
+
+                <Box staccSpace={8} expand>
+                  <Subsubtitle>Referrers</Subsubtitle>
+                  <Box staccSpace={8} py={16}>
+                    {referrerData.length === 0 ? (
+                      <Text>Nobody has been referred to your site yet.</Text>
+                    ) : (
+                      referrerData.map((referrer) => (
+                        <Box
+                          justify='space-between'
+                          direction='row'
+                          p={8}
+                          background='bg-secondary'
+                          key={referrer[0]}
+                          radius={2}
+                        >
+                          <Box align='flex-start'>
+                            <Text>{referrer[0]}</Text>
                           </Box>
-                        ))
-                    : null}
+                          <Box align='flex-end'>
+                            <Text>{referrer[1]}</Text>
+                          </Box>
+                        </Box>
+                      ))
+                    )}
+                  </Box>
                 </Box>
               </Box>
+
               <Box
                 staccSpace={24}
                 direction='row'
@@ -482,17 +503,25 @@ export default () => {
         setVisible={setShowDeleteWebsiteDialog}
         controls={
           <>
-            <Button variant='peripheral' color='primary' onClick={() => setShowDeleteWebsiteDialog(false)}>
+            <Button
+              variant='peripheral'
+              color='primary'
+              onClick={() => setShowDeleteWebsiteDialog(false)}
+            >
               Cancel
             </Button>
-            <Button variant='callout' color='danger' onClick={async () => {
-              await authedDataFetcher(
-                `/api/websites/delete/${router.query.id}`,
-                user
-              )
-              setShowEditWebsiteDialog(false)
-              router.push('/websites')
-            }}>
+            <Button
+              variant='callout'
+              color='danger'
+              onClick={async () => {
+                await authedDataFetcher(
+                  `/api/websites/delete/${router.query.id}`,
+                  user
+                )
+                setShowEditWebsiteDialog(false)
+                router.push('/websites')
+              }}
+            >
               Delete
             </Button>
           </>
@@ -514,6 +543,12 @@ export default () => {
           pointer-events: none;
           display: block;
           height: 200px;
+        }
+
+        @media only screen and (max-width: 800px) {
+          :global(.rv-xy-plot__axis) {
+            display: none;
+          }
         }
       `}</style>
     </>
