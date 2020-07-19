@@ -36,8 +36,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE')
   res.setHeader('Vary', 'Access-Control-Request-Headers')
-
-  if (req.method !== 'POST' && req.method !== 'OPTIONS') return res.status(400).send('Unsupported method')
+  if(req.method === 'OPTIONS') {
+    res.status(200)
+  } else {
+  if (req.method !== 'POST') return res.status(400).send('Unsupported method')
 
   const { href, referrer, token, os, language } = req.body
   if (!href) return res.status(400).send('No href specified')
@@ -60,4 +62,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   await Promise.all(promises)
 
   return res.status(200).json({})
+}
 }
