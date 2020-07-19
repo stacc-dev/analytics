@@ -25,7 +25,9 @@ import Input from 'components/input'
 import Title from 'components/title'
 import Text from 'components/text'
 import Subsubtitle from 'components/subsubtitle'
+import Subtitle from 'components/subtitle'
 import Select from 'components/select'
+import { ro } from 'date-fns/esm/locale'
 
 export default () => {
   const router = useRouter()
@@ -67,14 +69,23 @@ export default () => {
             </Button>
           </Box>
         </Box>
-      
-        <Box direction='row'>
+        { hits.data.hits.length <= 0 ? (
+          <Box staccSpace={16}>
+          <Subsubtitle>Here's your client ID: {router.query.id}</Subsubtitle>
+          <Text>And here the code you should use to load it</Text>
+          <code>
+            {`<script src="https://analytics.stacc.cc/api/script/${router.query.id}"></script>`}
+          </code>
+          </Box>
+        ): null }
+
+          <Box direction='row'>
           <Select
             options={[ 'Past year', 'Past month', 'Past day' ]}
             values={[ 'year', 'month', 'day' ]}
             selected={rangeType}
             onChange={(event) => setRangeType(event.target.value)}
-          />
+            />
         </Box>
       </Box>
 
@@ -85,19 +96,24 @@ export default () => {
           <Loader text='Loading hits...' />
         ) : (
           <Box>
-            <Box direction='row' pl={100}>
-              <Box $='article' staccSpace={8} background='accent' p={20} radius={8}>
+            <Box direction='column' pl={100}>
+              {hits.data.hits.length > 0 ? (
+
+                <Box $='article' staccSpace={8} background='accent' p={20} radius={8}>
                 <Subsubtitle>Total views</Subsubtitle>
                 
                 <Text>
-                  {hits.data.hits.reduce((past, current) => ({
-                    ...past,
-                    hits: past.hits + current.hits
-                  }), { hits: 0 }).hits}
+                {hits.data.hits.reduce((past, current) => ({
+                  ...past,
+                  hits: past.hits + current.hits
+                }), { hits: 0 }).hits}
                 </Text>
-              </Box>
+                </Box>
+              ) : <> 
+                
+              </>}
             </Box>
-
+                
             <Box>
               <div className='plot'>
                 <FlexibleWidthXYPlot height={330} margin={{ left: 100, right: 100 }} yPadding={10}>
@@ -135,6 +151,7 @@ export default () => {
               </div>
             </Box>
             <Box staccSpace={12} direction='row' mobileProps={{ direction: 'column', justify: 'center', align: 'flex-start' }} justify='space-between' align='center'>
+            {hits.data.hits.length > 0 ? ( <>
             <Box staccSpace={24}>
             <Subsubtitle>Operating Systems</Subsubtitle>
             <div className='plot'>
@@ -143,11 +160,11 @@ export default () => {
                 fontSize: '1.5rem',
                 textAlign: 'center'
               }} height={400} width={400} data={parseOses(hits.data.hits.reduce((past, current) => {
-                      return {
-                        ...past,
-                        oses: { ...past.oses, ...current.oses}
-                      }
-                    }).oses)} />
+                return {
+                  ...past,
+                  oses: { ...past.oses, ...current.oses}
+                }
+              }).oses)} />
               </div>
               </Box>
               <Box staccSpace={24}>
@@ -158,21 +175,22 @@ export default () => {
                 fontSize: '1.5rem',
                 textAlign: 'center'
               }} height={400} width={400} data={parseLanguages(hits.data.hits.reduce((past, current) => {
-                      return {
+                return {
                         ...past,
                         oses: { ...past.languages, ...current.languages}
                       }
                     }).languages)} />
               </div>
               </Box>
+              </>) : null}
             </Box>
-          </Box>
-        )}
-      </Box>
-    </Box>
-    
-    <Modal title='Edit website' visible={showEditWebsiteDialog} setVisible={setShowEditWebsiteDialog} controls={(
-      <Box direction='row' staccSpace={16}>
+            </Box>
+            )}
+            </Box>
+            </Box>
+            
+            <Modal title='Edit website' visible={showEditWebsiteDialog} setVisible={setShowEditWebsiteDialog} controls={(
+              <Box direction='row' staccSpace={16}>
         <Button variant='danger' color='secondary' onClick={async () => {
           await authedDataFetcher(`/api/websites/delete/${router.query.id}`, user)
           setShowEditWebsiteDialog(false)
