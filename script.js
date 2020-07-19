@@ -1,5 +1,5 @@
 (async () => {
-  const res = await fetch('/api/track', {
+  const res = await fetch('https://analytics.stacc.cc/api/track', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
