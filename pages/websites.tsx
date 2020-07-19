@@ -27,6 +27,7 @@ export default () => {
     user
   )
   const [showNewWebsiteDialog, setShowNewWebsiteDialog] = useState(false)
+  const [newWebsiteDialogLoading, setNewWebsiteDialogLoading] = useState(false)
 
   const [newWebsiteName, setNewWebsiteName] = useState('')
   const [newWebsiteDomain, setNewWebsiteDomain] = useState('')
@@ -132,16 +133,18 @@ export default () => {
             variant='callout'
             color='alternate'
             onClick={async () => {
+              setNewWebsiteDialogLoading(true)
               const { id } = await authedDataFetcher(
                 '/api/websites/new',
                 user,
                 { name: newWebsiteName, domain: newWebsiteDomain }
               )
               websites.revalidate()
+              setNewWebsiteDialogLoading(false)
               setShowNewWebsiteDialog(false)
               router.push('/website/[id]', `/website/${id}`)
             }}
-            disabled={!newWebsiteName || !newWebsiteDomain}
+            disabled={!newWebsiteName || !newWebsiteDomain || newWebsiteDialogLoading}
           >
             Create
           </Button>
