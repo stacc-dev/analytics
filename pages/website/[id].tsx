@@ -4,14 +4,17 @@ import { useRequireUser, useAuthedData } from 'lib/client/hooks'
 import { useRouter } from 'next/router'
 import { Website, Hit } from 'lib/isomorphic/types'
 import { useState } from 'react'
-import { authedDataFetcher } from 'lib/client/helpers'
+import { authedDataFetcher, parseOses, parseLanguages } from 'lib/client/helpers'
 import { format, eachHourOfInterval, eachMonthOfInterval, eachDayOfInterval, subDays, subYears, subMonths } from 'date-fns'
 
 import {
   FlexibleWidthXYPlot,
+  XYPlot,
   YAxis,
   XAxis,
-  LineSeries
+  LineSeries,
+  RadarChart,
+  RadialChart
 } from 'react-vis'
 
 import Loader, { FullscreenLoader } from 'components/loader'
@@ -130,6 +133,38 @@ export default () => {
                   />
                 </FlexibleWidthXYPlot>
               </div>
+            </Box>
+            <Box staccSpace={12} direction='row' mobileProps={{ direction: 'column', justify: 'center', align: 'flex-start' }} justify='space-between' align='center'>
+            <Box staccSpace={24}>
+            <Subsubtitle>Operating Systems</Subsubtitle>
+            <div className='plot'>
+              <RadialChart showLabels={true} labelsStyle={{
+                fill: 'white',
+                fontSize: '1.5rem',
+                textAlign: 'center'
+              }} height={400} width={400} data={parseOses(hits.data.hits.reduce((past, current) => {
+                      return {
+                        ...past,
+                        oses: { ...past.oses, ...current.oses}
+                      }
+                    }).oses)} />
+              </div>
+              </Box>
+              <Box staccSpace={24}>
+            <Subsubtitle>Languages</Subsubtitle>
+            <div className='plot'>
+              <RadialChart showLabels={true} labelsStyle={{
+                fill: 'white',
+                fontSize: '1.5rem',
+                textAlign: 'center'
+              }} height={400} width={400} data={parseLanguages(hits.data.hits.reduce((past, current) => {
+                      return {
+                        ...past,
+                        oses: { ...past.languages, ...current.languages}
+                      }
+                    }).languages)} />
+              </div>
+              </Box>
             </Box>
           </Box>
         )}

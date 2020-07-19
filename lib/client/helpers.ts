@@ -1,6 +1,7 @@
 import firebase from 'lib/client/firebase'
 import { User } from 'firebase'
 import { PaddingProps, FlexProps } from 'lib/isomorphic/types'
+import ISO6391 from 'iso-639-1';
 
 export const loginWith = (provider: firebase.auth.AuthProvider) => async () => {
   const { user } = await firebase.auth().signInWithPopup(provider)
@@ -73,4 +74,47 @@ export const getPaddingStyles = (props: PaddingProps) => {
   if (props.pr) lines.push(`padding-right: ${props.pr}px;`)
 
   return lines.join('\n')
+}
+
+export const parseOses = (oses: {
+  [key: string]: number
+}) => {
+  let supportedOses = {
+    Windows: 0, 
+    MacOs: 0, 
+    Linux: 0
+  }
+  for(let os of Object.entries(oses)) {
+    if(os[0].startsWith('Windows')) supportedOses.Windows += os[1];
+    if(os[0].startsWith('Mac')) supportedOses.MacOs += os[1];
+    if(os[0].startsWith('Linux')) supportedOses.Linux += os[1];
+    // if(os[0].startsWith('Open BSD')) supportedOses.BSD ++;
+  }
+  const entries = []
+  for(let os of Object.entries(supportedOses)) {
+    if(os[1] > 0) {
+      entries.push({ angle: os[1], label: os[0]})
+    }
+  }
+  return entries
+}
+export const parseLanguages = (languages: {
+  [key: string]: number
+}) => {
+  let langs = {
+
+  }
+  for(let language of Object.entries(languages)) {
+    const name = ISO6391.getName(language[0].substr(0, 2))
+    if(!langs[name]) {
+      langs[name] = language[1]
+    } else {
+      langs[name] += language[1]
+    }
+  }
+  let data = []
+  for(let lang of Object.entries(langs)) {
+    data.push({ angle: lang[1], label: lang[0]})
+  }
+  return data
 }
