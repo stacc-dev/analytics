@@ -1,7 +1,7 @@
 import firebase from 'lib/client/firebase'
 import { User } from 'firebase'
 import { PaddingProps, FlexProps } from 'lib/isomorphic/types'
-import ISO6391 from 'iso-639-1';
+import ISO6391 from 'iso-639-1'
 
 export const loginWith = (provider: firebase.auth.AuthProvider) => async () => {
   const { user } = await firebase.auth().signInWithPopup(provider)
@@ -10,7 +10,11 @@ export const loginWith = (provider: firebase.auth.AuthProvider) => async () => {
 
 export const logout = () => firebase.auth().signOut()
 
-export const authedDataFetcher = async (endpoint: string, user: User | null, payload?: {}) => {
+export const authedDataFetcher = async (
+  endpoint: string,
+  user: User | null,
+  payload?: {}
+) => {
   if (!user) return null
   const idToken = await user.getIdToken()
 
@@ -76,45 +80,49 @@ export const getPaddingStyles = (props: PaddingProps) => {
   return lines.join('\n')
 }
 
-export const parseOses = (oses: {
-  [key: string]: number
-}) => {
+export const parseOses = (oses: { [key: string]: number }) => {
   let supportedOses = {
-    Windows: 0, 
-    MacOs: 0, 
-    Linux: 0
+    Windows: 0,
+    macOS: 0,
+    Linux: 0,
+    Other: 0
   }
-  for(let os of Object.entries(oses)) {
-    if(os[0].startsWith('Windows')) supportedOses.Windows += os[1];
-    if(os[0].startsWith('Mac')) supportedOses.MacOs += os[1];
-    if(os[0].startsWith('Linux')) supportedOses.Linux += os[1];
-    // if(os[0].startsWith('Open BSD')) supportedOses.BSD ++;
+
+  for (let os of Object.entries(oses)) {
+    if (os[0].toLowerCase().includes('windows')) {
+      supportedOses.Windows += os[1]
+    } else if (os[0].toLowerCase().includes('mac')) {
+      supportedOses.macOS += os[1]
+    } else if (os[0].toLowerCase().includes('linux')) {
+      supportedOses.Linux += os[1]
+    } else {
+      supportedOses.Other += os[1]
+    }
   }
+
   const entries = []
-  for(let os of Object.entries(supportedOses)) {
-    if(os[1] > 0) {
-      entries.push({ angle: os[1], label: os[0]})
+  for (let os of Object.entries(supportedOses)) {
+    if (os[1] > 0) {
+      entries.push({ angle: os[1], label: os[0] })
     }
   }
   return entries
 }
-export const parseLanguages = (languages: {
-  [key: string]: number
-}) => {
-  let langs = {
 
-  }
-  for(let language of Object.entries(languages)) {
+export const parseLanguages = (languages: { [key: string]: number }) => {
+  let langs = {}
+  for (let language of Object.entries(languages)) {
     const name = ISO6391.getName(language[0].substr(0, 2))
-    if(!langs[name]) {
+    if (!langs[name]) {
       langs[name] = language[1]
     } else {
       langs[name] += language[1]
     }
   }
+
   let data = []
-  for(let lang of Object.entries(langs)) {
-    data.push({ angle: lang[1], label: lang[0]})
+  for (let lang of Object.entries(langs)) {
+    data.push({ angle: lang[1], label: lang[0] })
   }
   return data
 }

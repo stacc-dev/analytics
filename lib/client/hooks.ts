@@ -4,20 +4,28 @@ import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 import { authedDataFetcher } from 'lib/client/helpers'
 
-export const useRequireUser = (user: User | null, loading: boolean, redirect: string = '/') => {
+export const useRequireUser = (
+  user: User | null,
+  loading: boolean,
+  redirect: string = '/'
+) => {
   const router = useRouter()
   useEffect(() => {
     if (!loading && !user) router.replace(redirect)
-  }, [ user, loading ])
+  }, [user, loading])
 }
 
-export const useRequireNoUser = (user: User | null, loading: boolean, redirect: string = '/') => {
+export const useRequireNoUser = (
+  user: User | null,
+  loading: boolean,
+  redirect: string = '/'
+) => {
   const router = useRouter()
   useEffect(() => {
     if (!loading && user) router.replace(redirect)
-  }, [ user, loading ])
+  }, [user, loading])
 }
 
 export const useAuthedData = <Type>(endpoint: string, user: User | null) => {
-  return useSWR<Type>([ endpoint, user ], authedDataFetcher)
+  return useSWR<Type>([endpoint, user], authedDataFetcher)
 }

@@ -3,10 +3,10 @@ import Box from 'components/box'
 import Subtitle from 'components/subtitle'
 
 type Props = {
-  title: string,
-  children: ReactNode,
-  visible: boolean,
-  controls: ReactNode,
+  title: string
+  children: ReactNode
+  visible: boolean
+  controls: ReactNode
   setVisible?: (visible: boolean) => void
 }
 
@@ -14,7 +14,13 @@ export default ({ title, children, controls, visible, setVisible }: Props) => (
   <div className='container'>
     <div className='overlay' onClick={() => setVisible && setVisible(false)} />
 
-    <Box background='bg-primary' staccSpace={26} p={20} maxWidth={600} radius={12}>
+    <Box
+      background='bg-primary'
+      staccSpace={26}
+      p={20}
+      maxWidth={600}
+      radius={12}
+    >
       <Subtitle>{title}</Subtitle>
 
       <Box staccSpace={16}>{children}</Box>
@@ -51,7 +57,7 @@ export default ({ title, children, controls, visible, setVisible }: Props) => (
       }
 
       .overlay {
-        background: #000000EE;
+        background: #000000ee;
         position: fixed;
         top: 0;
         right: 0;

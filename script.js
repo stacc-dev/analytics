@@ -1,4 +1,4 @@
-(async () => {
+;(async () => {
   const res = await fetch('https://analytics.stacc.cc/api/track', {
     method: 'POST',
     headers: {

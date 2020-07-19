@@ -1,9 +1,18 @@
 import firebase, { auth } from 'firebase/app'
 import 'firebase/auth'
 
-if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY) throw new Error('NEXT_PUBLIC_FIREBASE_API_KEY environment variable not provided')
-if (!process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID) throw new Error('NEXT_PUBLIC_FIREBASE_PROJECT_ID environment variable not provided')
-if (!process.env.NEXT_PUBLIC_FIREBASE_APP_ID) throw new Error('NEXT_PUBLIC_FIREBASE_APP_ID environment variable not provided')
+if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY)
+  throw new Error(
+    'NEXT_PUBLIC_FIREBASE_API_KEY environment variable not provided'
+  )
+if (!process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID)
+  throw new Error(
+    'NEXT_PUBLIC_FIREBASE_PROJECT_ID environment variable not provided'
+  )
+if (!process.env.NEXT_PUBLIC_FIREBASE_APP_ID)
+  throw new Error(
+    'NEXT_PUBLIC_FIREBASE_APP_ID environment variable not provided'
+  )
 
 if (firebase.apps.length === 0) {
   firebase.initializeApp({

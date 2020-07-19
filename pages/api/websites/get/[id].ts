@@ -8,8 +8,9 @@ export default authenticate(async (req, res, user) => {
     .doc(req.query.id as string)
     .get()
 
-  if (!document.exists) return res.status(404).send('Website not found, dumbass')
-  
+  if (!document.exists)
+    return res.status(404).send('Website not found, dumbass')
+
   // if (document.get('uid') !== user.uid) {
   //   return res.status(401).send('You aren\'t the owner, dumbass')
   // }

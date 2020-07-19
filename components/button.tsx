@@ -1,25 +1,27 @@
 import { ReactNode } from 'react'
 
-type VariantColor = {
-  variant: 'callout',
-  color: 'accent' | 'alternate' | 'danger'
-} | {
-  variant: 'peripheral' | 'danger',
-  color: 'primary' | 'secondary' | 'alternate'
-}
+type VariantColor =
+  | {
+      variant: 'callout'
+      color: 'accent' | 'alternate' | 'danger'
+    }
+  | {
+      variant: 'peripheral' | 'danger'
+      color: 'primary' | 'secondary' | 'alternate'
+    }
 
 type Props = VariantColor & {
-  children: ReactNode,
-  disabled?: boolean,
+  children: ReactNode
+  disabled?: boolean
   onClick?: () => void
 }
 
 type SpecificStyles = {
-  background: string,
-  foreground: string,
-  hoverBackground?: string,
-  hoverForeground?: string,
-  otherStyles?: string,
+  background: string
+  foreground: string
+  hoverBackground?: string
+  hoverForeground?: string
+  otherStyles?: string
 }
 
 const getSpecificStyles = (variant: string, color: string): SpecificStyles => {
@@ -97,9 +99,15 @@ const getSpecificStyles = (variant: string, color: string): SpecificStyles => {
   }
 }
 
-export default ({ variant, color, children, onClick, disabled = false }: Props) => {
+export default ({
+  variant,
+  color,
+  children,
+  onClick,
+  disabled = false
+}: Props) => {
   const specificStyles = getSpecificStyles(variant, color)
-  
+
   return (
     <button onClick={onClick} disabled={disabled}>
       {children}
@@ -122,8 +130,12 @@ export default ({ variant, color, children, onClick, disabled = false }: Props) 
         }
 
         button:hover {
-          background: var(--${specificStyles.hoverBackground ?? specificStyles.background});
-          color: var(--${specificStyles.hoverForeground ?? specificStyles.foreground});
+          background: var(
+            --${specificStyles.hoverBackground ?? specificStyles.background}
+          );
+          color: var(
+            --${specificStyles.hoverForeground ?? specificStyles.foreground}
+          );
         }
 
         button[disabled] {

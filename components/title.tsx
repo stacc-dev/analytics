@@ -2,8 +2,8 @@ import { Color } from 'lib/isomorphic/types'
 import { ReactNode } from 'react'
 
 type Props = {
-  $?: 'h1' | 'h2' | 'h3' | 'p',
-  color?: Color,
+  $?: 'h1' | 'h2' | 'h3' | 'p'
+  color?: Color
   children: ReactNode
 }
 

@@ -1,14 +1,14 @@
 :root {
-  --bg-primary: #1B1F22;
-  --bg-secondary: #2C3038;
-  --fg-normal: #FFFFFF;
-  --fg-muted: #CFCFCF;
-  --fg-silent: #7D8288;
-  --accent: #3B5BDB;
-  --accent-modifier-hover: #486BF7;
-  --accent-modifier-fg-hover: #A5B5F8;
-  --danger-darker: #E03131;
-  --danger-lighter: #FF6B6B;
+  --bg-primary: #1b1f22;
+  --bg-secondary: #2c3038;
+  --fg-normal: #ffffff;
+  --fg-muted: #cfcfcf;
+  --fg-silent: #7d8288;
+  --accent: #3b5bdb;
+  --accent-modifier-hover: #486bf7;
+  --accent-modifier-fg-hover: #a5b5f8;
+  --danger-darker: #e03131;
+  --danger-lighter: #ff6b6b;
 }
 
 body {

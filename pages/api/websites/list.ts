@@ -7,7 +7,7 @@ export default authenticate(async (req, res, user) => {
     .collection('websites')
     // .where('uid', '==', user.uid)
     .get()
-  
+
   return res.status(200).json({
     websites: documents.docs.map((document) => ({
       ...document.data(),

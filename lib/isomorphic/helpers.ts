@@ -1,7 +1,19 @@
-import { startOfYear, startOfMonth, startOfDay, startOfHour, subYears, subMonths, subDays, subMinutes } from 'date-fns'
+import {
+  startOfYear,
+  startOfMonth,
+  startOfDay,
+  startOfHour,
+  subYears,
+  subMonths,
+  subDays,
+  subMinutes
+} from 'date-fns'
 import { RangeType } from 'lib/isomorphic/types'
 
-export const getRangeStartTime = (rangeType: RangeType, absolute: boolean = false) => {
+export const getRangeStartTime = (
+  rangeType: RangeType,
+  absolute: boolean = false
+) => {
   const now = new Date()
   let rangeStartTime: Date
   switch (rangeType) {

@@ -1,9 +1,9 @@
 import { ReactNode } from 'react'
 
 type Props = {
-  $?: 'div' | 'section' | 'article',
-  space: number,
-  cellWidth: number,
+  $?: 'div' | 'section' | 'article'
+  space: number
+  cellWidth: number
   children: ReactNode
 }
 

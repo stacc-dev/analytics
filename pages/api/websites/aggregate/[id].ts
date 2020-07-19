@@ -3,7 +3,7 @@ import firebase from 'lib/server/firebase'
 import { getRangeStartTime } from 'lib/isomorphic/helpers'
 import { Hit, RangeType } from 'lib/isomorphic/types'
 
-const hierarchy = [ 'year', 'month', 'day', 'hour' ]
+const hierarchy = ['year', 'month', 'day', 'hour']
 export default authenticate(async (req, res, user) => {
   const rangeType = (req.query.rangeType ?? 'day') as RangeType
 
@@ -18,8 +18,9 @@ export default authenticate(async (req, res, user) => {
   // }
 
   const rangeStartTime = getRangeStartTime(rangeType, true)
-  const collectionName = (hierarchy[hierarchy.indexOf(rangeType) + 1] ?? hierarchy[hierarchy.length - 1]) + 's'
-  console.log(collectionName, rangeStartTime.getTime())
+  const collectionName =
+    (hierarchy[hierarchy.indexOf(rangeType) + 1] ??
+      hierarchy[hierarchy.length - 1]) + 's'
   const query = await firebase
     .firestore()
     .collection('hits')
@@ -27,7 +28,7 @@ export default authenticate(async (req, res, user) => {
     .collection(collectionName)
     .where('rangeStartTime', '>=', rangeStartTime.getTime())
     .get()
-  
+
   const hits: Hit[] = query.docs.map((doc) => doc.data() as Hit)
   return res.status(200).json({ hits })
 })

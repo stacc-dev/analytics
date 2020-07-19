@@ -1,5 +1,9 @@
 import getUid from 'uid-promise'
-import { authenticate, validateDomain, normalizeDomain } from 'lib/server/helpers'
+import {
+  authenticate,
+  validateDomain,
+  normalizeDomain
+} from 'lib/server/helpers'
 import firebase from 'lib/server/firebase'
 import { Website } from 'lib/isomorphic/types'
 
@@ -9,7 +13,8 @@ export default authenticate(async (req, res, user) => {
   if (!domain) return res.status(400).send('No domain specified')
 
   const normalizedDomain = normalizeDomain(domain)
-  if (!validateDomain(normalizedDomain)) return res.status(400).send('Invalid domain')
+  if (!validateDomain(normalizedDomain))
+    return res.status(400).send('Invalid domain')
 
   const website: Website = {
     uid: user.uid,
@@ -18,7 +23,10 @@ export default authenticate(async (req, res, user) => {
     domain: normalizedDomain
   }
 
-  const document = await firebase.firestore().collection('websites').add(website)
-  
+  const document = await firebase
+    .firestore()
+    .collection('websites')
+    .add(website)
+
   return res.status(200).json({ id: document.id })
 })

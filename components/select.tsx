@@ -2,16 +2,20 @@ import { ChangeEvent } from 'react'
 import Caret from '@crypticat/ionicons/lib/caret-down'
 
 type Props = {
-  options: string[],
-  values?: string[],
-  selected: string,
+  options: string[]
+  values?: string[]
+  selected: string
   onChange?: (event: ChangeEvent<HTMLSelectElement>) => void
 }
 
-export default ({ options, selected, values = [],onChange }: Props) => (
+export default ({ options, selected, values = [], onChange }: Props) => (
   <div className='container'>
     <select value={selected} onChange={onChange}>
-      {options.map((option, index) => <option key={values[index] || option} value={values[index] || option}>{option}</option>)}
+      {options.map((option, index) => (
+        <option key={values[index] || option} value={values[index] || option}>
+          {option}
+        </option>
+      ))}
     </select>
 
     <div className='icon' aria-hidden>
@@ -23,7 +27,7 @@ export default ({ options, selected, values = [],onChange }: Props) => (
         display: block;
         background: var(--bg-secondary);
         font-family: inherit;
-        font-size: 0.88rem;
+        font-size: 1rem;
         color: var(--fg-normal);
         border: none;
         padding: 16px;
