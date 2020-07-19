@@ -343,8 +343,7 @@ export default () => {
                       labelsStyle={{
                         fill: 'white',
                         fontSize: '1.5rem',
-                        textAlign: 'center',
-                        fontWeight: 600
+                        textAlign: 'center'
                       }}
                       margin={{ left: 50, right: 50, top: 50, bottom: 50 }}
                       height={500}
@@ -379,8 +378,7 @@ export default () => {
                       labelsStyle={{
                         fill: 'white',
                         fontSize: '1.5rem',
-                        textAlign: 'center',
-                        fontWeight: 600
+                        textAlign: 'center'
                       }}
                       height={500}
                       width={400}
