@@ -31,3 +31,34 @@ body {
 a {
   text-decoration: none;
 }
+
+.rv-xy-plot {
+  position: relative;
+}
+
+.rv-xy-plot__axis__tick__text {
+  fill: var(--fg-muted);
+}
+
+.rv-discrete-color-legend {
+  color: var(--fg-normal);
+  position: absolute;
+  font-size: 14px;
+  pointer-events: none;
+  top: 0;
+  right: 0;
+  z-index: 88;
+  border-radius: 6px;
+  background: var(--bg-secondary);
+  padding: 8px 10px;
+  width: 180px;
+}
+
+.rv-discrete-color-legend svg {
+  height: 10px;
+  margin-right: 4px;
+}
+
+.rv-discrete-color-legend svg path {
+  stroke-width: 20px;
+}

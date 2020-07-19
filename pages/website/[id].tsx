@@ -2,9 +2,19 @@ import { useAuthState } from 'react-firebase-hooks/auth'
 import firebase from 'lib/client/firebase'
 import { useRequireUser, useAuthedData } from 'lib/client/hooks'
 import { useRouter } from 'next/router'
-import { Website } from 'lib/isomorphic/types'
+import { Website, Hit } from 'lib/isomorphic/types'
 import { useState } from 'react'
 import { authedDataFetcher } from 'lib/client/helpers'
+import { format, eachHourOfInterval, subDays } from 'date-fns'
+
+import {
+  FlexibleWidthXYPlot,
+  DiscreteColorLegend,
+  YAxis,
+  XAxis,
+  Crosshair,
+  LineSeries
+} from 'react-vis'
 
 import Loader, { FullscreenLoader } from 'components/loader'
 import Modal from 'components/modal'
@@ -13,6 +23,11 @@ import Box from 'components/box'
 import Input from 'components/input'
 import Title from 'components/title'
 
+const lastDayHours = eachHourOfInterval({
+  start: subDays(new Date(), 1),
+  end: new Date()
+}).map((date) => date.getTime())
+
 export default () => {
   const router = useRouter()
 
@@ -20,6 +35,7 @@ export default () => {
   useRequireUser(user, loading)
 
   const website = useAuthedData<Website>(`/api/websites/get/${router.query.id}`, user)
+  const hits = useAuthedData<{ hits: Hit[] }>(`/api/websites/aggregate/${router.query.id}`, user)
 
   const [ showEditWebsiteDialog, setShowEditWebsiteDialog ] = useState(false)
   const [ editWebsiteName, setEditWebsiteName ] = useState('')
@@ -47,7 +63,37 @@ export default () => {
       </Box>
 
       <Box direction='column' staccSpace={38} maxWidth={1200}>
-        graph uwu
+        {hits.error ? (
+          <p>Error loading hits: {hits.error.message}</p>
+        ) : !hits.data ? (
+          <Loader text='Loading hits...' />
+        ) : (
+          <div className='plot'>
+            <FlexibleWidthXYPlot height={330} margin={{ left: 100, right: 100 }} yPadding={10}>
+              <YAxis />
+              <XAxis tickTotal={8} tickFormat={(when) => format(new Date(when), `haaa`.toLowerCase())} />
+
+              <LineSeries
+                data={lastDayHours.map((hour) => {
+                  const hit = hits.data.hits.find(({ rangeStartTime }) => rangeStartTime === hour)
+                  if (!hit) return {
+                    x: hour,
+                    y: 0
+                  }
+                  return {
+                    x: hit.rangeStartTime,
+                    y: hit.hits
+                  }
+                })}
+
+                style={{
+                  fill: 'transparent',
+                  strokeWidth: 2
+                }}
+              />
+            </FlexibleWidthXYPlot>
+          </div>
+        )}
       </Box>
     </Box>
     
@@ -73,5 +119,11 @@ export default () => {
       <Input placeholder='BridgeHacks' label='Name' id='name' value={editWebsiteName} onChange={(event) => setEditWebsiteName(event.target.value)} />
       <Input placeholder='bridgehacks.com' label='Domain' id='domain'value={editWebsiteDomain} onChange={(event) => setEditWebsiteDomain(event.target.value)} />
     </Modal>
+  
+    <style jsx>{`
+      .plot {
+        user-select: none;
+      }
+    `}</style>
   </>
 }

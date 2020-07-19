@@ -11,9 +11,9 @@ export default authenticate(async (req, res, user) => {
     .get()
 
   if (!document.exists) return res.status(404).send('Website not found, dumbass')
-  if (document.get('uid') !== user.uid) {
-    return res.status(401).send('You aren\'t the owner, dumbass')
-  }
+  // if (document.get('uid') !== user.uid) {
+  //   return res.status(401).send('You aren\'t the owner, dumbass')
+  // }
   
   await document.ref.delete()
   return res.status(200).json({})

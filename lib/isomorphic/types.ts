@@ -1,5 +1,4 @@
 export type Website = { uid: string, name: string, token: string, domain: string }
-export type Hit = { referrer: string, token: string, path: string, date: Date , language: string, os: string }
 export type Color = 'fg-normal' | 'fg-muted' | 'bg-primary' | 'bg-secondary' | 'accent'
 
 export type PaddingProps = {
@@ -18,4 +17,14 @@ export type FlexProps = {
   justify?: 'center' | 'flex-start' | 'flex-end' | 'space-between',
   noFlex?: boolean,
   expand?: number | boolean | string
+}
+
+export type Hit = {
+  token: string,
+  rangeStartTime: number,
+  hits: number,
+  oses?: { [key: string]: number },
+  languages?: { [key: string]: number },
+  paths?: { [key: string]: number },
+  referrers?: { [key: string]: number }
 }

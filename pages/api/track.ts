@@ -1,7 +1,36 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { validateDomain, normalizeDomain } from 'lib/server/helpers'
+import { normalizeDomain } from 'lib/server/helpers'
 import firebase from 'lib/server/firebase'
-import { Hit } from 'lib/isomorphic/types'
+import { getRangeStartTime } from 'lib/isomorphic/helpers'
+
+const track = async (token: string, rangeType: string, os: string, language: string, path: string, referrer?: string) => {
+  const rangeStartTime = getRangeStartTime(rangeType as 'year' | 'month' | 'day' | 'hour')
+
+  await firebase.firestore()
+    .collection('hits')
+    .doc(token)
+    .collection(rangeType + 's')
+    .doc(rangeStartTime.getTime().toString())
+    .set({
+      token,
+      rangeStartTime: rangeStartTime.getTime(),
+      hits: firebase.firestore.FieldValue.increment(1),
+      oses: {
+        [os]: firebase.firestore.FieldValue.increment(1)
+      },
+      languages: {
+        [language]: firebase.firestore.FieldValue.increment(1)
+      },
+      paths: {
+        [path]: firebase.firestore.FieldValue.increment(1)
+      },
+      ...(referrer ? {
+        referrers: {
+          [referrer]: firebase.firestore.FieldValue.increment(1)
+        }
+      } : {})
+    }, { merge: true })
+}
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
@@ -20,16 +49,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (website.get('domain') !== normalizeDomain(url.hostname) && url.hostname !== 'localhost') {
     return res.status(400).send(`Wrong domain idiot, expected ${website.get('domain')}`)
   }
-  
-  const hit: Hit = {
-    referrer,
-    token,
-    path: url.pathname,
-    date: new Date(),
-    language: language,
-    os: os
-  }
 
-  await firebase.firestore().collection('hits').add(hit)
+  const promises = []
+  for (let type of [ 'year', 'month', 'day', 'hour' ]) {
+    promises.push(track(token, type, os, language, url.pathname, referrer))
+  }
+  await Promise.all(promises)
+
   return res.status(200).json({})
 }

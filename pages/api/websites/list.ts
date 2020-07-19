@@ -5,7 +5,7 @@ export default authenticate(async (req, res, user) => {
   const documents = await firebase
     .firestore()
     .collection('websites')
-    .where('uid', '==', user.uid)
+    // .where('uid', '==', user.uid)
     .get()
   
   return res.status(200).json({
