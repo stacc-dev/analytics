@@ -22,6 +22,10 @@ import Button from 'components/button'
 import Box from 'components/box'
 import Input from 'components/input'
 import Title from 'components/title'
+import Text from 'components/text'
+import Subsubtitle from 'components/subsubtitle'
+import Subtitle from 'components/subtitle'
+import Select from 'components/select'
 
 const lastDayHours = eachHourOfInterval({
   start: subDays(new Date(), 1),
@@ -31,11 +35,12 @@ const lastDayHours = eachHourOfInterval({
 export default () => {
   const router = useRouter()
 
+  const [ rangeType, setRangeType ] = useState('day')
   const [ user, loading ] = useAuthState(firebase.auth())
   useRequireUser(user, loading)
 
   const website = useAuthedData<Website>(`/api/websites/get/${router.query.id}`, user)
-  const hits = useAuthedData<{ hits: Hit[] }>(`/api/websites/aggregate/${router.query.id}`, user)
+  const hits = useAuthedData<{ hits: Hit[] }>(`/api/websites/aggregate/${router.query.id}?rangeType=${rangeType}`, user)
 
   const [ showEditWebsiteDialog, setShowEditWebsiteDialog ] = useState(false)
   const [ editWebsiteName, setEditWebsiteName ] = useState('')
@@ -68,6 +73,30 @@ export default () => {
         ) : !hits.data ? (
           <Loader text='Loading hits...' />
         ) : (
+          <>
+          <Box staccSpace={24}>
+            <Box direction='row'>
+            <Select options={['Yearly', 'Monthly', 'Daily']} values={['year', 'month', 'day']} selected={rangeType} onChange={(event) => {
+              const { value } = event.target;
+              setRangeType(value)
+            }}/>
+            </Box>
+            <Box staccSpace={20} direction='row'>
+              <Box $='article' staccSpace={8} background='accent' p={20} radius={8}>
+                <Subsubtitle>Total views</Subsubtitle>
+                {/* typescript doesn't like this but it works */}
+                {/* @ts-ignore */}
+                <Text>
+                {hits.data.hits.reduce((past, current) => ({
+                  ...past,
+                  hits: past.hits + current.hits
+                })).hits}
+                </Text>
+              </Box>
+            </Box>
+          </Box>
+          <Box>
+          <Subtitle>Total Views Graph</Subtitle>
           <div className='plot'>
             <FlexibleWidthXYPlot height={330} margin={{ left: 100, right: 100 }} yPadding={10}>
               <YAxis />
@@ -93,6 +122,8 @@ export default () => {
               />
             </FlexibleWidthXYPlot>
           </div>
+          </Box>
+          </>
         )}
       </Box>
     </Box>

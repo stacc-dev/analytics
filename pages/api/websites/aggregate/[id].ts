@@ -1,10 +1,12 @@
 import { subDays, startOfHour } from 'date-fns'
 import { authenticate } from 'lib/server/helpers'
 import firebase from 'lib/server/firebase'
-import { getRangeStartTime } from 'lib/isomorphic/helpers'
+import { getRangeStartTime, RangeType } from 'lib/isomorphic/helpers'
 import { Hit } from 'lib/isomorphic/types'
 
+const hierarchy = [ 'year', 'month', 'day', 'hour']
 export default authenticate(async (req, res, user) => {
+  const rangeType = (req.query.rangeType || 'day') as RangeType
   const website = await firebase
     .firestore()
     .collection('websites')
@@ -15,12 +17,13 @@ export default authenticate(async (req, res, user) => {
   //   return res.status(401).send('You aren\'t the owner, dumbass')
   // }
 
-  const rangeStartTime = getRangeStartTime('day')
+  const rangeStartTime = getRangeStartTime(rangeType)
+  const collectionName = (hierarchy[hierarchy.indexOf(rangeType) + 1] || hierarchy[hierarchy.length - 1]) + 's'
   const query = await firebase
   .firestore()
   .collection('hits')
   .doc(website.get('token'))
-  .collection('hours')
+  .collection(collectionName)
   .where('rangeStartTime', '>=', rangeStartTime.getTime())
   .get()
   

@@ -1,6 +1,7 @@
 import { startOfYear, startOfMonth, startOfDay, startOfHour } from 'date-fns'
 
-export const getRangeStartTime = (rangeType: 'year' | 'month' | 'day' | 'hour') => {
+export type RangeType ='year' | 'month' | 'day' | 'hour'
+export const getRangeStartTime = (rangeType: RangeType) => {
   const now = new Date()
   let rangeStartTime: Date
   switch (rangeType) {
