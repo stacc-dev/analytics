@@ -34,9 +34,8 @@ const track = async (token: string, rangeType: string, os: string, language: str
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
-  res.setHeader('Access-Control-Allow-Methods', 'POST')
-  res.setHeader('Access-Control-Allow-Headers', 'access-control-allow-origin,content-type')
-  res.setHeader('Content-Type', 'application/json')
+  res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE')
+  res.setHeader('Vary', 'Access-Control-Request-Headers')
 
   if (req.method !== 'POST') return res.status(400).send('Unsupported method')
 
