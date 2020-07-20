@@ -92,14 +92,15 @@ export default () => {
   if (!website.data || !user) return <FullscreenLoader />
 
   const referrerData = hits.data?.hits
-    ? (Object.entries(
+  ? (Object.entries(
+        // @ts-ignore
         hits.data.hits.reduce((past, current) => ({
           ...past,
           referrers: softMerge(
             past.referrers ?? {},
             current.referrers ?? {}
           )
-        }))?.referrers || {}
+        }), { referrers: {} })?.referrers || {}
       ).sort((a, b) => (b[1] > a[1] ? 1 : -1)))
     : []  
 
